@@ -24,10 +24,8 @@ toolchains' Omnibus scripts (available [here](https://github.com/CodethinkLabs/o
 4. *Worth doing*: Backup vdi of bare-OS VM.
 5. Provision the VM with [`provisioning-omnibus-VMs`](https://github.com/CodethinkLabs/provisioning-omnibus-VMs)
    project.
-    - To make ssh connection possible, switch networking to bridged in the VM by
-      executing `./switch_vm_networking.sh -n VM_NAME -t bridged`.
-    - After provisioning, you may want to switch back to NAT by executing
-      `./switch_vm_networking.sh -n VM_NAME -t nat`.
+    - To make ssh connection possible, switch VM's networking to bridged
+      or set up port forwarding manually.
 6. *Worth doing*: Backup vdi of provisioned VM.
 
 ## Create VirtualBox CentOS 6.8 VM based on existing vdi
