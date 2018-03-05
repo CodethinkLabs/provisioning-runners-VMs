@@ -1,0 +1,59 @@
+- hosts: RUNNERVM
+  tasks:
+  - name: Change hostname to centos-68-test
+    hostname:
+      name: "centos-68-test"
+    become: true
+
+  - name: Modify /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      regexp: '^127\.0\.0\.1[ \t]+localhost'
+      line: '127.0.0.1 localhost centos-68-test'
+      state: present
+    become: true
+
+  - name: Install wandisco git repository to install git from it
+    yum:
+      name: http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
+      state: present
+    become: true
+
+  - name: Install the latest version of git from wandisco repository
+    yum:
+      name: git
+      state: latest
+    become: true
+
+  - name: Create /opt/codethink-gcc
+    file:
+      path: "/opt/codethink-gcc"
+      state: directory
+      owner: test
+      group: test
+      mode: 0775
+    become: yes
+
+  - name: Install centos-release-scl
+    yum:
+      name: "{{ item }}"
+      state: latest
+    become: true
+    with_items:
+    - centos-release-scl
+
+  - name: Install devtoolset-7
+    yum:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - devtoolset-7
+    become: true
+
+  - name: Append enable scl devtoolset-7 in bash_profile
+    lineinfile:
+      dest: /home/test/.bash_profile
+      state: present
+      line: 'source scl_source enable {{ item }}'
+    with_items:
+    - devtoolset-7

@@ -1,0 +1,38 @@
+---
+- hosts: RUNNERVM
+  become: true
+  vars:
+    # created with:
+    # python -c 'import crypt; print crypt.crypt("1ns3cur3", "insecure")'
+    password: inyr/N2x97F.E
+
+  tasks:
+  - name: Make sure we have a 'wheel' group
+    group:
+      name: wheel
+      state: present
+
+  - name: Install libselinux-python to be able to use linein copy
+    yum:
+      name: libselinux-python
+      state: present
+
+  - name: Allow 'wheel' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+  - name: Add test user to the system
+    user:
+      name: "{{ item }}"
+      password: "{{ password }}"
+      shell: /bin/bash
+      groups: wheel
+      append: yes
+      state: present
+      createhome: yes
+    with_items:
+    - test
